@@ -16,7 +16,7 @@ interface PersonDao {
     @Query("SELECT * FROM persons WHERE id = :id")
     suspend fun getPersonById(id: Long): PersonEntity?
 
-    @Insert(onConflict = OnConflict Strategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPerson(person: PersonEntity): Long
 
     @Delete
