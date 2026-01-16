@@ -1,12 +1,12 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
-    namespace = "com.photoguardian.app"
+    namespace = "com.photoguardian"
     compileSdk = 34
 
     defaultConfig {
@@ -21,7 +21,7 @@ android {
             useSupportLibrary = true
         }
 
-        // Schema export for Room
+        // Schema export for Room (saves schema to a folder for version control)
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
@@ -30,21 +30,25 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            // Basic optimization rules
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug") // For demo purposes
+            // In a real app, you would use a proper signing config here.
+            // For this demo/build guide, we use the debug key to avoid errors.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        // Upgraded to Java 17 (Required for Gradle 8.2+ / AGP 8.2+)
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -53,6 +57,7 @@ android {
     }
 
     composeOptions {
+        // Matches Kotlin 1.9.22
         kotlinCompilerExtensionVersion = "1.5.8"
     }
 
@@ -64,52 +69,56 @@ android {
 }
 
 dependencies {
-    // Core Android
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    // --- Android Core & Lifecycle ---
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.activity:activity-compose:1.8.2")
 
-    // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
+    // --- Jetpack Compose (using BOM for version stability) ---
+    implementation(platform("androidx.compose:compose-bom:2024.01.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.6")
 
-    // Hilt - Dependency Injection
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    ksp(libs.hilt.android.compiler)
+    // --- Hilt (Dependency Injection) ---
+    implementation("com.google.dagger:hilt-android:2.50")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    ksp("com.google.dagger:hilt-android-compiler:2.50")
 
-    // Room - Database
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+    // --- Room (Database) ---
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
+    // --- Coroutines ---
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // Image Loading
-    implementation(libs.coil.compose)
+    // --- Image Loading (Coil) ---
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
-    // TensorFlow Lite
-    implementation(libs.tensorflow.lite)
-    implementation(libs.tensorflow.lite.support)
-    implementation(libs.tensorflow.lite.gpu)
+    // --- TensorFlow Lite (ML) ---
+    implementation("org.tensorflow:tensorflow-lite:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
+    implementation("org.tensorflow:tensorflow-lite-gpu:2.14.0")
 
-    // Security
-    implementation(libs.androidx.security.crypto)
+    // --- Security ---
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // WorkManager
-    implementation(libs.androidx.work.runtime.ktx)
+    // --- WorkManager ---
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
-    // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    // --- Testing ---
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.01.00"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    
+    // Debug Tools
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
