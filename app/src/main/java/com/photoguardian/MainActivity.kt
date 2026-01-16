@@ -1,4 +1,4 @@
-package com.photoguardian.app
+package com.photoguardian
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
