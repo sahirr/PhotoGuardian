@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.photoguardian.presentation.theme.PhotoGuardianTheme
 import dagger.hilt.android.AndroidEntryPoint
+import com.photoguardian.ui.theme.PhotoGuardianTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
